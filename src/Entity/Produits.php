@@ -7,6 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Assert\Length;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitsRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -15,27 +18,36 @@ class Produits
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["get_produits", "get_produit", "get_intervention"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["get_produits", "get_produit", "get_intervention"])]
+    #[Assert\NotBlank(message: "La désignation du produit ne peut pas être vide.")]
+    #[Assert\Length(min: 3, max: 255, minMessage: "La désignation du produit ne peut pas contenir moins de 3 caractères.", maxMessage: "La désignation ne peut pas contenir plus de 255 caractères.")]
     private ?string $designation = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    #[Groups(["get_produits", "get_produit"])]
     private ?string $prix = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["get_produits", "get_produit"])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(["get_produits", "get_produit"])]
     private ?\DateTimeImmutable $created_at = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["get_produits", "get_produit"])]
     private ?\DateTimeInterface $modified_at = null;
 
     /**
      * @var Collection<int, InterventionProduit>
      */
     #[ORM\OneToMany(targetEntity: InterventionProduit::class, mappedBy: 'produit')]
+    #[Groups(["get_produit"])]
     private Collection $interventionProduits;
 
     public function __construct()

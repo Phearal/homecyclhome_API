@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InterventionsRepository::class)]
 class Interventions
@@ -14,33 +15,42 @@ class Interventions
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["get_produit", "get_interventions", "get_intervention"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["get_interventions", "get_intervention"])]
     private ?string $velo_categorie = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["get_interventions", "get_intervention"])]
     private ?bool $velo_electrique = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["get_interventions", "get_intervention"])]
     private ?string $velo_marque = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["get_interventions", "get_intervention"])]
     private ?string $velo_modele = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["get_interventions", "get_intervention"])]
     private ?string $adresse = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["get_interventions", "get_intervention"])]
     private ?string $commentaire_client = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["get_interventions", "get_intervention"])]
     private ?string $photo = null;
 
     /**
      * @var Collection<int, InterventionProduit>
      */
     #[ORM\OneToMany(targetEntity: InterventionProduit::class, mappedBy: 'intervention')]
+    #[Groups(["get_intervention"])]
     private Collection $interventionProduits;
 
     public function __construct()

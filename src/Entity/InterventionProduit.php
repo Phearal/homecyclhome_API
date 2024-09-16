@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\InterventionProduitRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InterventionProduitRepository::class)]
 class InterventionProduit
@@ -17,12 +18,15 @@ class InterventionProduit
     #[ORM\Id]
     #[ORM\ManyToOne(inversedBy: 'interventionProduits')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["get_produit", "get_intervention"])]
     private ?Interventions $intervention = null;
 
     #[ORM\Column]
+    #[Groups(["get_produit", "get_intervention"])]
     private ?int $quantite = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    #[Groups(["get_produit", "get_intervention"])]
     private ?string $prix = null;
 
     public function getProduit(): ?Produits
