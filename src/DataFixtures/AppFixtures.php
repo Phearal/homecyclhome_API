@@ -17,18 +17,6 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
-        /* Génération des produits */
-        for ($i = 0 ; $i < 20 ; $i++) {
-            $produit = new Produits();
-            $produit->setDesignation("Designation" . $i);
-            $produit->setPrix((100 + $i) * random_int(100, 1000));
-            $description = $this->client->request(
-                'GET',
-                'https://loripsum.net/api/2/plaintext'
-            );
-            $produit->setDescription($description->getContent());
-            $manager->persist($produit);
-        }
         $velos_references = [
             "Peugeot" => ["Citystar", "RC500", "RCZ", "E-Legend"],
             "Lapierre" => ["Overvolt", "Aircode", "Xelius"],
@@ -45,6 +33,18 @@ class AppFixtures extends Fixture
             "Heroïn" => ["Dirt Jump", "Fixie", "BMX", "E-BMX"],
             "Stajvelo" => ["Gravel", "Cyclocross", "Tout-terrain", "E-Adventure"]
         ];
+        /* Génération des produits */
+        for ($i = 0 ; $i < 20 ; $i++) {
+            $produit = new Produits();
+            $produit->setDesignation("Designation" . $i);
+            $produit->setPrix(random_int(1, 100) - 0.01);
+            $description = $this->client->request(
+                'GET',
+                'https://loripsum.net/api/2/plaintext'
+            );
+            $produit->setDescription($description->getContent());
+            $manager->persist($produit);
+        }
         for ($i = 0 ; $i < 30 ; $i++) {
             $intervention = new Interventions();
             $intervention->setVeloElectrique($i%2);
