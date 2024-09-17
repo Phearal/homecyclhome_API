@@ -27,7 +27,7 @@ class ProduitsController extends AbstractController
         return new JsonResponse($produits_json, Response::HTTP_OK, [], true);
     }
 
-    /* Renvoie un produit via son id */
+    /* Retourne un produit */
     #[Route('/api/produits/{id}', name: 'produit', methods: ["GET"])]
     public function get_produit(Produits $produit, ProduitsRepository $produitsRepository, SerializerInterface $serializer): JsonResponse
     {
@@ -35,8 +35,9 @@ class ProduitsController extends AbstractController
         return new JsonResponse($produit_json, Response::HTTP_OK, [], true);
     }
 
-    /* Supprime un produit via son id */
+    /* Supprime un produit */
     #[Route('/api/produits/{id}', name: 'delete_produit', methods: ["DELETE"])]
+    #[IsGranted("ROLE_ADMIN", message: "Droits insuffisants.")]
     public function delete_produit(Produits $produit, EntityManagerInterface $em): JsonResponse
     {
         $em->remove($produit);
@@ -63,7 +64,7 @@ class ProduitsController extends AbstractController
         return new JsonResponse($json_produit, Response::HTTP_CREATED, ["location" => $location], true);
     }
 
-    /* Met à jour un produit via son id */
+    /* Écrase un produit existant */
     #[Route('/api/produits/{id}', name: 'update_produit', methods: ["PUT"])]
     public function update_produit(Produits $produit, EntityManagerInterface $em, SerializerInterface $serializer, ProduitsRepository $produitsrepository, Request $request): JsonResponse
     {
@@ -73,23 +74,4 @@ class ProduitsController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
-    /* Met à jour un produit */
-    #[Route('/api/produits/{id}/edit', name: 'produit_edit', methods: ["GET"])]
-    public function edit_produit(Produits $produit, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
-    {
-        $produit->setDesignation("aqzdeazeaze");
-        $produit_json = $serializer->serialize($produit, 'json');
-        try {
-            $em->persist($produit);
-            $em->flush();
-            return new JsonResponse($produit_json, Response::HTTP_OK, [], true);
-        } catch(Exception $e) {
-            return new JsonResponse($produit, Response::HTTP_INTERNAL_SERVER_ERROR, [], true);
-        }
-    }
-
-    /* Ajoute un produit */
-    /* Supprime un produit */
-    /* Écrase un produit */
 }
