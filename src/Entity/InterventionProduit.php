@@ -11,15 +11,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class InterventionProduit
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(inversedBy: 'interventionProduits')]
+    #[ORM\ManyToOne(inversedBy: 'interventionProduit')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Produits $produit = null;
+    private ?Produit $produit = null;
 
     #[ORM\Id]
-    #[ORM\ManyToOne(inversedBy: 'interventionProduits')]
+    #[ORM\ManyToOne(inversedBy: 'interventionProduit')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["get_produit", "get_intervention"])]
-    private ?Interventions $intervention = null;
+    private ?Intervention $intervention = null;
 
     #[ORM\Column]
     #[Groups(["get_produit", "get_intervention"])]
@@ -29,24 +29,24 @@ class InterventionProduit
     #[Groups(["get_produit", "get_intervention"])]
     private ?string $prix = null;
 
-    public function getProduit(): ?Produits
+    public function getProduit(): ?Produit
     {
         return $this->produit;
     }
 
-    public function setProduit(?Produits $produit): static
+    public function setProduit(?Produit $produit): static
     {
         $this->produit = $produit;
 
         return $this;
     }
 
-    public function getIntervention(): ?Interventions
+    public function getIntervention(): ?Intervention
     {
         return $this->intervention;
     }
 
-    public function setIntervention(?Interventions $intervention): static
+    public function setIntervention(?Intervention $intervention): static
     {
         $this->intervention = $intervention;
 

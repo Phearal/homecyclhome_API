@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\ProduitsRepository;
+use App\Repository\ProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -11,9 +11,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Assert\Length;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: ProduitsRepository::class)]
+#[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Produits
+class Produit
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -48,11 +48,11 @@ class Produits
      */
     #[ORM\OneToMany(targetEntity: InterventionProduit::class, mappedBy: 'produit')]
     #[Groups(["get_produit"])]
-    private Collection $interventionProduits;
+    private Collection $interventionProduit;
 
     public function __construct()
     {
-        $this->interventionProduits = new ArrayCollection();
+        $this->interventionProduit = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -138,15 +138,15 @@ class Produits
     /**
      * @return Collection<int, InterventionProduit>
      */
-    public function getInterventionProduits(): Collection
+    public function getInterventionProduit(): Collection
     {
-        return $this->interventionProduits;
+        return $this->interventionProduit;
     }
 
     public function addInterventionProduit(InterventionProduit $interventionProduit): static
     {
-        if (!$this->interventionProduits->contains($interventionProduit)) {
-            $this->interventionProduits->add($interventionProduit);
+        if (!$this->interventionProduit->contains($interventionProduit)) {
+            $this->interventionProduit->add($interventionProduit);
             $interventionProduit->setProduit($this);
         }
 
@@ -155,7 +155,7 @@ class Produits
 
     public function removeInterventionProduit(InterventionProduit $interventionProduit): static
     {
-        if ($this->interventionProduits->removeElement($interventionProduit)) {
+        if ($this->interventionProduit->removeElement($interventionProduit)) {
             // set the owning side to null (unless already changed)
             if ($interventionProduit->getProduit() === $this) {
                 $interventionProduit->setProduit(null);

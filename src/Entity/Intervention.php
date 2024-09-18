@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\InterventionsRepository;
+use App\Repository\InterventionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: InterventionsRepository::class)]
-class Interventions
+#[ORM\Entity(repositoryClass: InterventionRepository::class)]
+class Intervention
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,11 +51,27 @@ class Interventions
      */
     #[ORM\OneToMany(targetEntity: InterventionProduit::class, mappedBy: 'intervention')]
     #[Groups(["get_intervention"])]
-    private Collection $interventionProduits;
+    private Collection $interventionProduit;
+
+    #[ORM\ManyToOne(inversedBy: 'interventions')]
+    private ?TypeIntervention $type_intervention = null;
+
+    #[ORM\ManyToOne(inversedBy: 'demandes_intervention')]
+    private ?User $client = null;
+
+    #[ORM\ManyToOne(inversedBy: 'interventions')]
+    private ?User $technicien = null;
+
+    /**
+     * @var Collection<int, CommentaireIntervention>
+     */
+    #[ORM\OneToMany(targetEntity: CommentaireIntervention::class, mappedBy: 'intervention')]
+    private Collection $commentaires;
 
     public function __construct()
     {
-        $this->interventionProduits = new ArrayCollection();
+        $this->interventionProduit = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -150,15 +166,15 @@ class Interventions
     /**
      * @return Collection<int, InterventionProduit>
      */
-    public function getInterventionProduits(): Collection
+    public function getInterventionProduit(): Collection
     {
-        return $this->interventionProduits;
+        return $this->interventionProduit;
     }
 
     public function addInterventionProduit(InterventionProduit $interventionProduit): static
     {
-        if (!$this->interventionProduits->contains($interventionProduit)) {
-            $this->interventionProduits->add($interventionProduit);
+        if (!$this->interventionProduit->contains($interventionProduit)) {
+            $this->interventionProduit->add($interventionProduit);
             $interventionProduit->setIntervention($this);
         }
 
@@ -167,10 +183,76 @@ class Interventions
 
     public function removeInterventionProduit(InterventionProduit $interventionProduit): static
     {
-        if ($this->interventionProduits->removeElement($interventionProduit)) {
+        if ($this->interventionProduit->removeElement($interventionProduit)) {
             // set the owning side to null (unless already changed)
             if ($interventionProduit->getIntervention() === $this) {
                 $interventionProduit->setIntervention(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTypeIntervention(): ?TypeIntervention
+    {
+        return $this->type_intervention;
+    }
+
+    public function setTypeIntervention(?TypeIntervention $type_intervention): static
+    {
+        $this->type_intervention = $type_intervention;
+
+        return $this;
+    }
+
+    public function getClient(): ?User
+    {
+        return $this->client;
+    }
+
+    public function setClient(?User $client): static
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    public function getTechnicien(): ?User
+    {
+        return $this->technicien;
+    }
+
+    public function setTechnicien(?User $technicien): static
+    {
+        $this->technicien = $technicien;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireIntervention>
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(CommentaireIntervention $commentaire): static
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires->add($commentaire);
+            $commentaire->setIntervention($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(CommentaireIntervention $commentaire): static
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getIntervention() === $this) {
+                $commentaire->setIntervention(null);
             }
         }
 

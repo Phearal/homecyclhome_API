@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -31,6 +33,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, Intervention>
+     */
+    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: 'client')]
+    private Collection $demandes_intervention;
+
+    /**
+     * @var Collection<int, Intervention>
+     */
+    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: 'technicien')]
+    private Collection $interventions;
+
+    /**
+     * @var Collection<int, CommentaireIntervention>
+     */
+    #[ORM\OneToMany(targetEntity: CommentaireIntervention::class, mappedBy: 'technicien')]
+    private Collection $commentaireInterventions;
+
+    public function __construct()
+    {
+        $this->demandes_intervention = new ArrayCollection();
+        $this->interventions = new ArrayCollection();
+        $this->commentaireInterventions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -115,5 +142,95 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Intervention>
+     */
+    public function getDemandesIntervention(): Collection
+    {
+        return $this->demandes_intervention;
+    }
+
+    public function addDemandesIntervention(Intervention $demandesIntervention): static
+    {
+        if (!$this->demandes_intervention->contains($demandesIntervention)) {
+            $this->demandes_intervention->add($demandesIntervention);
+            $demandesIntervention->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandesIntervention(Intervention $demandesIntervention): static
+    {
+        if ($this->demandes_intervention->removeElement($demandesIntervention)) {
+            // set the owning side to null (unless already changed)
+            if ($demandesIntervention->getClient() === $this) {
+                $demandesIntervention->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Intervention>
+     */
+    public function getInterventions(): Collection
+    {
+        return $this->interventions;
+    }
+
+    public function addIntervention(Intervention $intervention): static
+    {
+        if (!$this->interventions->contains($intervention)) {
+            $this->interventions->add($intervention);
+            $intervention->setTechnicien($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIntervention(Intervention $intervention): static
+    {
+        if ($this->interventions->removeElement($intervention)) {
+            // set the owning side to null (unless already changed)
+            if ($intervention->getTechnicien() === $this) {
+                $intervention->setTechnicien(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireIntervention>
+     */
+    public function getCommentaireInterventions(): Collection
+    {
+        return $this->commentaireInterventions;
+    }
+
+    public function addCommentaireIntervention(CommentaireIntervention $commentaireIntervention): static
+    {
+        if (!$this->commentaireInterventions->contains($commentaireIntervention)) {
+            $this->commentaireInterventions->add($commentaireIntervention);
+            $commentaireIntervention->setTechnicien($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireIntervention(CommentaireIntervention $commentaireIntervention): static
+    {
+        if ($this->commentaireInterventions->removeElement($commentaireIntervention)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireIntervention->getTechnicien() === $this) {
+                $commentaireIntervention->setTechnicien(null);
+            }
+        }
+
+        return $this;
     }
 }

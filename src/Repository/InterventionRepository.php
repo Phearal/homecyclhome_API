@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Interventions;
+use App\Entity\Intervention;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Interventions>
+ * @extends ServiceEntityRepository<Intervention>
  */
-class InterventionsRepository extends ServiceEntityRepository
+class InterventionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Interventions::class);
+        parent::__construct($registry, Intervention::class);
     }
 
 //    /**
-//     * @return Interventions[] Returns an array of Interventions objects
+//     * @return Intervention[] Returns an array of Intervention objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -31,7 +31,7 @@ class InterventionsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Interventions
+//    public function findOneBySomeField($value): ?Intervention
 //    {
 //        return $this->createQueryBuilder('i')
 //            ->andWhere('i.exampleField = :val')

@@ -3,8 +3,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
-use App\Entity\Produits;
-use App\Entity\Interventions;
+use App\Entity\Produit;
+use App\Entity\Intervention;
+use App\Entity\TypeIntervention;
 use App\Entity\InterventionProduit;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -35,6 +36,19 @@ class AppFixtures extends Fixture
             "Stajvelo" => ["Gravel", "Cyclocross", "Tout-terrain", "E-Adventure"]
         ];
         
+        // Création des types d'intervention
+        $type_inter1 = new TypeIntervention();
+        $type_inter1->setNom("Maintenance");
+        $type_inter1->setPrixDepart(30);
+        $type_inter1->setDuree(new \DateTime('00:30'));
+        $manager->persist($type_inter1);
+        $type_inter2 = new TypeIntervention();
+        $type_inter2->setNom("Réparation");
+        $type_inter2->setPrixDepart(45);
+        $type_inter2->setDuree(new \DateTime('00:45'));
+        $manager->persist($type_inter2);
+        $types_intervention = [$type_inter1, $type_inter2];
+
         // Création d'un user normal
         $user = new User();
         $user->setEmail("user@gmail.com");
@@ -52,7 +66,7 @@ class AppFixtures extends Fixture
         /* Génération des produits */
         for ($i = 0 ; $i < 30 ; $i++) {
             // Generate produits
-            $produit = new Produits();
+            $produit = new Produit();
             $produit->setDesignation("Designation " . $i);
             $prix_produit = random_int(1, 100) - 0.01;
             $produit->setPrix($prix_produit);
@@ -63,7 +77,7 @@ class AppFixtures extends Fixture
             $produit->setDescription($description->getContent());
 
             // Generate interventions
-            $intervention = new Interventions();
+            $intervention = new Intervention();
             $intervention->setVeloElectrique($i%2);
             $intervention->setVeloCategorie("Catégorie");
             $marque = array_rand($velos_references);
@@ -72,6 +86,8 @@ class AppFixtures extends Fixture
             $intervention->setVeloMarque($marque);
             $intervention->setVeloModele($modeleAleatoire);
             $intervention->setAdresse("Adresse " . $i);
+            $d = array_rand($types_intervention);
+            $intervention->setTypeIntervention($types_intervention[random_int(0, 1)]);
 
             // Génération InterventionProduit
             $pile_face = random_int(0, 1);
