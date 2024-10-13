@@ -51,7 +51,7 @@ class ProduitController extends AbstractController
         $cache->invalidateTags(["produits_cache"]);
         $em->remove($produit);
         $em->flush();
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT, [], true);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /* Créé un nouveau produit */
